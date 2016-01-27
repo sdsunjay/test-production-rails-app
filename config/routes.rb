@@ -10,8 +10,8 @@ Rails.application.routes.draw do
   get 'post/update'
 
   get 'welcome/index'
-
-  devise_for :users, :controllers => { omniauth_callbacks: 'omniauth_callbacks' }
+  # devise_for :users, :controllers => { omniauth_callbacks: 'omniauth_callbacks' }
+  devise_for :users, :controllers => { :omniauth_callbacks => "omniauth_callbacks" }
   resources :users, only: [:show, :index]
  # match '/users/:id/finish_signup' => 'users#finish_signup', via: [:get, :patch], :as => :finish_signup
   match '/users/:id/finish_signup' => 'post#index', via: [:get, :patch], :as => :finish_signup
