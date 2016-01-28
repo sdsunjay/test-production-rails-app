@@ -39,11 +39,12 @@ class User < ActiveRecord::Base
       email_is_verified = auth.info.email && (auth.info.verified || auth.info.verified_email)
       email = auth.info.email if email_is_verified
       user = User.where(:email => email).first if email
-      #puts auth.extra.raw_info.age_range.min[1]
+      puts auth.extra.raw_info.age_range.min[1]
+      puts auth.extra.raw_info.age_range.max[1]
 
       # Create the user if it's a new registration
       if user.nil?
-        user = User.create(first_name:auth.extra.raw_info.first_name,last_name:auth.extra.raw_info.last_name,gender:auth.extra.raw_info.gender,uid:auth.uid,profile_picture:auth.info.image,link:auth.extra.raw_info.link,email: auth.info.email,age_min:auth.extra.raw_info.age_range.min[1], password: Devise.friendly_token[0,20])
+        user = User.create(first_name:auth.extra.raw_info.first_name,last_name:auth.extra.raw_info.last_name,gender:auth.extra.raw_info.gender,uid:auth.uid,profile_picture:auth.info.image,link:auth.extra.raw_info.link,email: auth.info.email,age_min:auth.extra.raw_info.age_range.min[1],age_max:auth.extra.raw_info.age_range.max[1], password: Devise.friendly_token[0,20])
         #user.skip_confirmation!
 	#user.skip_confirmation! if user.respond_to?(:skip_confirmation)
         user.save!
