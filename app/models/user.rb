@@ -16,7 +16,7 @@ class User < ActiveRecord::Base
   validates_uniqueness_of :uid, :email
 
 
-  def self.find_for_oauth(auth, signed_in_resource = nil)
+  def self.find_for_oauth(auth, signed_in_resource = nil,kauth)
 
     #puts "auth token is \n"
     #puts auth
@@ -32,22 +32,22 @@ class User < ActiveRecord::Base
 
     # Create the user if needed
     if user.nil?
-
+      koala(kauth)
       # Get the existing user by email if the provider gives us a verified email.
       # If no verified email was provided we assign a temporary email and ask the
       # user to verify it on the next step via UsersController.finish_signup
       email_is_verified = auth.info.email && (auth.info.verified || auth.info.verified_email)
       email = auth.info.email if email_is_verified
       user = User.where(:email => email).first if email
-      puts auth.extra.raw_info.age_range.min[1]
-      puts auth.extra.raw_info.age_range.max[1]
+
+      #koala(auth['credentials'])
 
       # Create the user if it's a new registration
       if user.nil?
         user = User.create(first_name:auth.extra.raw_info.first_name,last_name:auth.extra.raw_info.last_name,gender:auth.extra.raw_info.gender,uid:auth.uid,profile_picture:auth.info.image,link:auth.extra.raw_info.link,email: auth.info.email,age_min:auth.extra.raw_info.age_range.min[1],age_max:auth.extra.raw_info.age_range.max[1], password: Devise.friendly_token[0,20])
         #user.skip_confirmation!
 	#user.skip_confirmation! if user.respond_to?(:skip_confirmation)
-        user.save!
+        #user.save!
       end
     end
 
@@ -62,6 +62,20 @@ class User < ActiveRecord::Base
   def email_verified?
     self.email && self.email !~ TEMP_EMAIL_REGEX
   end
+  def koala(auth)
+    access_token = auth['token']
+    facebook = Koala::Facebook::API.new(access_token)
+	#facebook.get_object("me?fields=name,picture")    
+    friends = facebook.get_connections("me", "friends")
+    puts friends
+  end
+#  def user_friends
+#     @fb_user = FbGraph::User.new('me', access_token: session[:fb_access_token]).fetch
+#     @fb_user.each do |f|
+#       friend = FbGraph::User.fetch(f, :access_token => @access_token)
+#       puts friend.id
+#     end
+#  end
 end
 
 

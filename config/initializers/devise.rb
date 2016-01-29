@@ -1,14 +1,14 @@
 # Use this hook to configure devise mailer, warden hooks and so forth.
 # Many of these configuration options can be set straight in your model.
+FACEBOOK_CONFIG = YAML::load_file("#{Rails.root}/config/facebook.yml")[Rails.env]
 Devise.setup do |config|
-config.omniauth :facebook,"FACEBOOK_APP_ID","FACEBOOK_APP_SECRET",scope: 'public_profile,email', info_fields: 'email, id,first_name,last_name,gender,picture,link,age_range'
-  
-  # The secret key used by Devise. Devise uses this key to generate
+  config.omniauth :facebook,FACEBOOK_CONFIG['app_id'], FACEBOOK_CONFIG['secret'], scope: 'public_profile,email,user_friends', image_size: 'normal', info_fields: 'email, id,first_name,last_name,gender,picture,link,age_range,friends'
+ # The secret key used by Devise. Devise uses this key to generate
   # random tokens. Changing this key will render invalid all existing
   # confirmation, reset password and unlock tokens in the database.
   # Devise will use the `secret_key_base` on Rails 4+ applications as its `secret_key`
   # by default. You can change it below and use your own secret key.
-  # config.secret_key = 'YOUR_SECRET_KEY_HERE'
+  # config.secret_key = 'dd0fc98ff5ca5533da7dfd983421fcceb4f3ee719a9cb94d6bf320a35970155de6933aa7e75b061a461a8e105b698cc9d6a9c60bf8bbad19e8b59903f1c03630'
 
   # ==> Mailer Configuration
   # Configure the e-mail address which will be shown in Devise::Mailer,
@@ -101,7 +101,7 @@ config.omniauth :facebook,"FACEBOOK_APP_ID","FACEBOOK_APP_SECRET",scope: 'public
   config.stretches = Rails.env.test? ? 1 : 10
 
   # Setup a pepper to generate the encrypted password.
-  # config.pepper = 'something'
+  # config.pepper = '84f2c7a991d8cf62a57e0f2e312d5f13fb138a8061664f423360323c9148e03dd906cf55d99410b3ecb74bc24de7facabdaa00bb9a35e0efc8e3db781260d84a'
 
   # Send a notification email when the user's password is changed
   # config.send_password_change_notification = false

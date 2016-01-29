@@ -23,6 +23,7 @@ gem 'turbolinks'
 gem 'devise'
 gem 'omniauth'
 gem 'omniauth-facebook'
+gem 'fb_graph2'
 gem "koala", "~> 2.2"
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
