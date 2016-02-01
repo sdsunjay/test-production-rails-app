@@ -12,9 +12,10 @@ Rails.application.routes.draw do
   get 'welcome/index'
   # devise_for :users, :controllers => { omniauth_callbacks: 'omniauth_callbacks' }
   devise_for :users, :controllers => { :omniauth_callbacks => "omniauth_callbacks" }
-  resources :users, only: [:show, :index]
- # match '/users/:id/finish_signup' => 'users#finish_signup', via: [:get, :patch], :as => :finish_signup
-  match '/users/:id/finish_signup' => 'post#index', via: [:get, :patch], :as => :finish_signup
+  resources :users, only: [:show, :index, :edit]
+  match '/users/:id/finish_signup' => 'users#finish_signup', via: [:get, :patch], :as => :finish_signup
+  # we add this simply for debugging
+  # match '/users/:id/finish_signup' => 'post#index', via: [:get, :patch], :as => :finish_signup
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

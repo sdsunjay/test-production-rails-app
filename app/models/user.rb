@@ -3,6 +3,9 @@ class User < ActiveRecord::Base
   # :confirmable, :lockable, :timeoutable and :omniauthable
   # devise :database_authenticatable, :registerable, :recoverable, :rememberable, :trackable, :validatable
 
+  TEMP_PHONE_PREFIX = '5555555555'
+  TEMP_PHONE_REGEX = /\A5555555555/
+
   TEMP_EMAIL_PREFIX = 'change@me'
   TEMP_EMAIL_REGEX = /\Achange@me/
 
@@ -11,12 +14,14 @@ class User < ActiveRecord::Base
   devise :database_authenticatable, :registerable, :recoverable, :rememberable, :trackable, :validatable, :omniauthable, :omniauth_providers => [:facebook]
 
   validates_format_of :email, :without => TEMP_EMAIL_REGEX, on: :update
+  validates_format_of :phone, :without => TEMP_PHONE_REGEX, on: :update
   # attr_accessible :email, :last_name, :first_name, :gender, :uid, :profile_picture, :link, :provider, :oauth_token, :oauth_expires_at    
-  validates_presence_of :first_name, :last_name, :email, :uid
+  validates_presence_of :first_name, :last_name, :email, :uid, :phone
   validates_uniqueness_of :uid, :email
+  serialize :friends
+  enum access_level: [:user, :admin, :super_admin]
 
-
-  def self.find_for_oauth(auth, signed_in_resource = nil,kauth)
+  def self.find_for_oauth(auth, signed_in_resource = nil)
 
     #puts "auth token is \n"
     #puts auth
@@ -32,7 +37,6 @@ class User < ActiveRecord::Base
 
     # Create the user if needed
     if user.nil?
-      koala(kauth)
       # Get the existing user by email if the provider gives us a verified email.
       # If no verified email was provided we assign a temporary email and ask the
       # user to verify it on the next step via UsersController.finish_signup
@@ -40,14 +44,17 @@ class User < ActiveRecord::Base
       email = auth.info.email if email_is_verified
       user = User.where(:email => email).first if email
 
-      #koala(auth['credentials'])
 
       # Create the user if it's a new registration
       if user.nil?
-        user = User.create(first_name:auth.extra.raw_info.first_name,last_name:auth.extra.raw_info.last_name,gender:auth.extra.raw_info.gender,uid:auth.uid,profile_picture:auth.info.image,link:auth.extra.raw_info.link,email: auth.info.email,age_min:auth.extra.raw_info.age_range.min[1],age_max:auth.extra.raw_info.age_range.max[1], password: Devise.friendly_token[0,20])
+        # request the list of friends for the user
+        friends = koala(auth.credentials)
+	phone_temp = "555-555-5555"
+	# insert all the data into the db
+        user = User.create(first_name:auth.extra.raw_info.first_name,last_name:auth.extra.raw_info.last_name,gender:auth.extra.raw_info.gender,uid:auth.uid,profile_picture:auth.info.image,link:auth.extra.raw_info.link,email: auth.info.email,age_min:auth.extra.raw_info.age_range.min[1],age_max:auth.extra.raw_info.age_range.max[1], password: Devise.friendly_token[0,20], friends: friends, phone: phone_temp)
         #user.skip_confirmation!
 	#user.skip_confirmation! if user.respond_to?(:skip_confirmation)
-        #user.save!
+        user.save!
       end
     end
 
@@ -59,23 +66,22 @@ class User < ActiveRecord::Base
     user
   end
 
+  def phone_verified?
+    self.phone && self.phone !~ TEMP_PHONE_REGEX
+  end
   def email_verified?
     self.email && self.email !~ TEMP_EMAIL_REGEX
   end
-  def koala(auth)
-    access_token = auth['token']
+  
+  private
+
+  def self.koala(auth)
+    access_token = auth.token
     facebook = Koala::Facebook::API.new(access_token)
-	#facebook.get_object("me?fields=name,picture")    
+    #facebook.get_object("me?fields=name,picture")    
     friends = facebook.get_connections("me", "friends")
-    puts friends
+    return friends
   end
-#  def user_friends
-#     @fb_user = FbGraph::User.new('me', access_token: session[:fb_access_token]).fetch
-#     @fb_user.each do |f|
-#       friend = FbGraph::User.fetch(f, :access_token => @access_token)
-#       puts friend.id
-#     end
-#  end
 end
 
 

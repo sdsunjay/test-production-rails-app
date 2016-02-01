@@ -1,5 +1,38 @@
-
-
-			<% if @users.exists? %>	
-				<% @users.each_with_index do |p, index| %>
-						<h3>From <%= p.name %> 
+<h2 class="page-header">Manage Users <%= link_to "Create New",  new_user_registration_path, class:'btn btn-success pull-right'%></h2> 
+    <% if @users.exists? %>
+              <table class="table table-striped">
+                <tr>
+                  <th>Role </th>
+                  <th>User's Full Name</th>
+                  <th>Gender</th>
+                  <th>Email</th>
+                  <th>Phone Number</th>
+                  <th>Facebook Picture </th>
+                  <th>Min Age</th>
+                  <th>Max Age</th>
+                  <th>Create Date </th>
+                  <th>Last Sign In </th>
+                  <th>Sign In Count </th>
+                  <th>Actions</th>
+              </tr>
+              <% @users.each do |user| %>
+                <tr>
+                    <td><%= user.access_level %></td>
+                    <td><%= link_to (user.first_name + ' ' + user.last_name), user.link %></td>
+           	    <td><%= user.gender %></td>
+                    <td><%= user.email %></td>
+                    <td><%= user.phone %></td>
+                    <td><%= image_tag user.profile_picture %></td>
+                    <td><%= user.age_min %></td>
+                    <td><%= user.age_max %></td>
+                    <td><%= user.created_at.to_time.strftime('%B %e at %l:%M %p' ) %></td>
+                    <td><%= user.last_sign_in_at.to_time.strftime('%B %e at %l:%M %p' ) %></td>
+                    <td><%= user.sign_in_count %></td>
+                    <td><%= link_to 'Edit', edit_user_path(user), class: 'btn btn-primary' %> <%= link_to 'Delete', user_path(user), class: 'btn btn-danger', method: :delete, data: { confirm: "Are you sure?" } %></td>
+                </tr>
+            <% end %>
+            </table>
+        <%= will_paginate @users %>
+    <% else %>
+        <p>There are no users</p>
+    <% end %>

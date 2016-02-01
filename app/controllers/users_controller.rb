@@ -1,17 +1,19 @@
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy]
  def index
-    authorize! 
-	@users = User.all
+    #authorize! 
+    @users = User.all.order('created_at DESC').paginate(:per_page => 10, :page => params[:page])
   end
 
   # GET /users/:id.:format
   def show
+    @user = User.find(params[:id])
     # authorize! :read, @user
   end
 
   # GET /users/:id/edit
   def edit
+    @user = User.find(params[:id])
     # authorize! :update, @user
   end
 
@@ -60,7 +62,7 @@ class UsersController < ApplicationController
     end
 
     def user_params
-      accessible = [ :first_name, :last_name, :gender, :uid, :profile_picture, :link, :email, :age_min, :age_max ] # extend with your own params
+      accessible = [ :first_name, :last_name, :gender, :uid, :profile_picture, :link, :email, :age_min, :age_max, :friends ] # extend with your own params
       accessible << [ :password, :password_confirmation ] unless params[:user][:password].blank?
       params.require(:user).permit(accessible)
     end

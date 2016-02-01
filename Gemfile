@@ -23,8 +23,10 @@ gem 'turbolinks'
 gem 'devise'
 gem 'omniauth'
 gem 'omniauth-facebook'
-gem 'fb_graph2'
 gem "koala", "~> 2.2"
+
+gem 'font-awesome-rails', '~> 4.5.0'
+gem 'bootstrap-sass', '~> 3.2.0'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 2.0'
@@ -39,7 +41,7 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
-
+gem "will_paginate", "~> 3.0"
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
