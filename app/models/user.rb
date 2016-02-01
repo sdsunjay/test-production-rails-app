@@ -4,14 +4,14 @@ class User < ActiveRecord::Base
   # devise :database_authenticatable, :registerable, :recoverable, :rememberable, :trackable, :validatable
 
   TEMP_PHONE_PREFIX = '5555555555'
-  TEMP_PHONE_REGEX = /\A5555555555/
+  TEMP_PHONE_REGEX = /\A555-555-5555/
 
   TEMP_EMAIL_PREFIX = 'change@me'
   TEMP_EMAIL_REGEX = /\Achange@me/
 
   # Include default devise modules. Others available are:
   # :lockable, :timeoutable
-  devise :database_authenticatable, :registerable, :recoverable, :rememberable, :trackable, :validatable, :omniauthable, :omniauth_providers => [:facebook]
+  devise :database_authenticatable, :registerable, :recoverable, :rememberable, :trackable, :validatable, :confirmable, :lockable, :omniauthable, :omniauth_providers => [:facebook]
 
   validates_format_of :email, :without => TEMP_EMAIL_REGEX, on: :update
   validates_format_of :phone, :without => TEMP_PHONE_REGEX, on: :update
@@ -51,8 +51,8 @@ class User < ActiveRecord::Base
         friends = koala(auth.credentials)
 	phone_temp = "555-555-5555"
 	# insert all the data into the db
-        user = User.create(first_name:auth.extra.raw_info.first_name,last_name:auth.extra.raw_info.last_name,gender:auth.extra.raw_info.gender,uid:auth.uid,profile_picture:auth.info.image,link:auth.extra.raw_info.link,email: auth.info.email,age_min:auth.extra.raw_info.age_range.min[1],age_max:auth.extra.raw_info.age_range.max[1], password: Devise.friendly_token[0,20], friends: friends, phone: phone_temp)
-        #user.skip_confirmation!
+        user = User.new(first_name:auth.extra.raw_info.first_name,last_name:auth.extra.raw_info.last_name,gender:auth.extra.raw_info.gender,uid:auth.uid,profile_picture:auth.info.image,link:auth.extra.raw_info.link,email: auth.info.email,age_min:auth.extra.raw_info.age_range.min[1],age_max:auth.extra.raw_info.age_range.max[1], password: Devise.friendly_token[0,20], friends: friends, phone: phone_temp, access_level: 2)
+        user.skip_confirmation!
 	#user.skip_confirmation! if user.respond_to?(:skip_confirmation)
         user.save!
       end

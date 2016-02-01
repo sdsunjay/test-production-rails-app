@@ -12,7 +12,7 @@ Rails.application.routes.draw do
   get 'welcome/index'
   # devise_for :users, :controllers => { omniauth_callbacks: 'omniauth_callbacks' }
   devise_for :users, :controllers => { :omniauth_callbacks => "omniauth_callbacks" }
-  resources :users, only: [:show, :index, :edit]
+  resources :users, only: [:show, :index, :edit, :destroy, :update]
   match '/users/:id/finish_signup' => 'users#finish_signup', via: [:get, :patch], :as => :finish_signup
   # we add this simply for debugging
   # match '/users/:id/finish_signup' => 'post#index', via: [:get, :patch], :as => :finish_signup
