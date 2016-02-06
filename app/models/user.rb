@@ -16,16 +16,12 @@ class User < ActiveRecord::Base
   validates_format_of :email, :without => TEMP_EMAIL_REGEX, on: :update
   validates_format_of :phone, :without => TEMP_PHONE_REGEX, on: :update
   # attr_accessible :email, :last_name, :first_name, :gender, :uid, :profile_picture, :link, :provider, :oauth_token, :oauth_expires_at    
-  validates_presence_of :first_name, :last_name, :email, :uid, :phone
-  validates_uniqueness_of :uid, :email
+  validates_presence_of :first_name, :last_name, :email, :phone
+  validates_uniqueness_of :email
   serialize :friends
   enum access_level: [:user, :admin, :super_admin]
 
   def self.find_for_oauth(auth, signed_in_resource = nil)
-
-    #puts "auth token is \n"
-    #puts auth
-    
     # Get the identity and user if they exist
     identity = Identity.find_for_oauth(auth)
 
@@ -51,7 +47,7 @@ class User < ActiveRecord::Base
         friends = koala(auth.credentials)
 	phone_temp = "555-555-5555"
 	# insert all the data into the db
-        user = User.new(first_name:auth.extra.raw_info.first_name,last_name:auth.extra.raw_info.last_name,gender:auth.extra.raw_info.gender,uid:auth.uid,profile_picture:auth.info.image,link:auth.extra.raw_info.link,email: auth.info.email,age_min:auth.extra.raw_info.age_range.min[1],age_max:auth.extra.raw_info.age_range.max[1], password: Devise.friendly_token[0,20], friends: friends, phone: phone_temp, access_level: 2)
+        user = User.new(first_name:auth.extra.raw_info.first_name,last_name:auth.extra.raw_info.last_name,gender:auth.extra.raw_info.gender,profile_picture:auth.info.image,link:auth.extra.raw_info.link,email: auth.info.email,age_min:auth.extra.raw_info.age_range.min[1],age_max:auth.extra.raw_info.age_range.max[1], password: Devise.friendly_token[0,20], friends: friends, phone: phone_temp, access_level: 2)
         user.skip_confirmation!
 	#user.skip_confirmation! if user.respond_to?(:skip_confirmation)
         user.save!
