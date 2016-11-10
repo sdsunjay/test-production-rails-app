@@ -18,7 +18,7 @@
 # Don't use `:all`, it's a meta role.
 
 set :stage, :production
-server 'cprideshare.com', port: 22, user: "deploy", roles: [:web, :app, :db], primary: true
+server 'cprideshare.com', port: 6969, user: "deploy", roles: [:web, :app, :db], primary: true
 
 set :branch, ENV["REVISION"] || ENV["BRANCH_NAME"] || "master"
 
