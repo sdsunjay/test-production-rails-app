@@ -1,7 +1,7 @@
 # config valid only for current version of Capistrano
 lock '3.4.1'
 set :application, 'hitch'
-set :repo_url, 'git@github.com:sdsunjay/hitch_a_ride.git'
+set :repo_url, 'git@github.com:sdsunjay/test-production-rails-app.git'
 
 set :user, 'deploy'
 #set :deploy_to, "/home/#{ user }/#{ application }"
@@ -12,7 +12,7 @@ set :use_sudo, true
 # Default deploy_to directory is /var/www/my_app_name
 set :rbenv_ruby_version, '2.2.4'
 set :rbenv_path, '/home/deploy/.rbenv'
-set :deploy_to, '/home/deploy/hitch_a_ride'
+set :deploy_to, '/home/deploy/test-production-rails-app'
 
 # Default value for :scm is :git
 set :scm, :git
